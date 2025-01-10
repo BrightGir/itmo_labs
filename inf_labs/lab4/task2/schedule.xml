@@ -1,0 +1,62 @@
+<schedule>
+    <wednesday>
+        <lesson1>
+            <time>08:20 - 09:50</time>
+            <subject>Информатика</subject>
+            <lecturer>Балакшин Павел Валерьевич</lecturer>
+            <room>Актовый зал (1216/0)</room>
+            <address>ул. Ломоносова, д.9, лит. М</address>
+        </lesson1>
+        <lesson2>
+            <time>10:00 - 11:30</time>
+            <subject>Основы профессиональной деятельности</subject>
+            <lecturer>Клименков Сергей Викторович</lecturer>
+            <room>Актовый зал (1216/0)</room>
+            <address>ул. Ломоносова, д.9, лит. М</address>
+        </lesson2>
+        <lesson3>
+            <time>15:20 - 16:50</time>
+            <subject>Английский язык B1.1</subject>
+            <lecturer>Морозова Анна Михайловна</lecturer>
+            <room>3213</room>
+            <address>ул. Ломоносова, д.9, лит. Е</address>
+        </lesson3>
+        <lesson4>
+            <time>17:00 - 18:30</time>
+            <subject>Английский язык B1.1</subject>
+            <lecturer>Морозова Анна Михайловна</lecturer>
+            <room>3213</room>
+            <address>ул. Ломоносова, д.9, лит. Е</address>
+        </lesson4>
+    </wednesday>
+    <saturday>
+        <lesson1>
+            <time>08:20 - 09:50</time>
+            <subject>Математический анализ (продвинутый уровень)</subject>
+            <lecturer>Холодова Светлана Евгеньевна</lecturer>
+            <room>1405</room>
+            <address>Кронверкский пр., д.49, лит. А</address>
+        </lesson1>
+        <lesson2>
+            <time>10:00 - 11:30</time>
+            <subject>Математический анализ (продвинутый уровень)</subject>
+            <lecturer>Холодова Светлана Евгеньевна</lecturer>
+            <room>1405</room>
+            <address>Кронверкский пр., д.49, лит. А</address>
+        </lesson2>
+        <lesson3>
+            <time>13:30 - 15:00</time>
+            <subject>Основы профессиональной деятельности</subject>
+            <lecturer>Остапенко Иван Вадимович</lecturer>
+            <room>2116</room>
+            <address>Кронверкский пр., д.49, лит. А</address>
+        </lesson3>
+        <lesson4>
+            <time>15:20 - 16:50</time>
+            <subject>Основы профессиональной деятельности</subject>
+            <lecturer>Остапеко Иван Вадимович</lecturer>
+            <room>2116</room>
+            <address>Кронверкский пр., д.49, лит. А</address>
+        </lesson4>
+    </saturday>
+</schedule>
