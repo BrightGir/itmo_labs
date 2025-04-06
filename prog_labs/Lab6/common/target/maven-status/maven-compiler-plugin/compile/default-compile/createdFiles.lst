@@ -1,0 +1,11 @@
+ru\bright\commands\Command.class
+ru\bright\model\Flat.class
+ru\bright\commands\CommandManager.class
+ru\bright\ResponseStatus.class
+ru\bright\Request.class
+ru\bright\commands\CommandType.class
+ru\bright\Response.class
+ru\bright\model\House.class
+ru\bright\Main.class
+ru\bright\model\Coordinates.class
+ru\bright\model\Furnish.class

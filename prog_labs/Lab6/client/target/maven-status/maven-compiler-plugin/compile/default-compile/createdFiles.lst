@@ -1,0 +1,16 @@
+ru\bright\commands\RemoveLowerCommand.class
+ru\bright\commands\AddIfMaxCommand.class
+ru\bright\commands\ExitCommand.class
+ru\bright\commands\UpdateCommand.class
+ru\bright\util\requests\FurnishRequest.class
+ru\bright\util\requests\CoordinatesRequest.class
+ru\bright\util\requests\Request.class
+ru\bright\Client.class
+ru\bright\util\BasicConsole.class
+ru\bright\util\ClientCommandManager.class
+ru\bright\util\Console.class
+ru\bright\commands\AddCommand.class
+ru\bright\util\requests\FlatRequest.class
+ru\bright\util\requests\HouseRequest.class
+ru\bright\commands\types\ClientCommand.class
+ru\bright\Main.class
