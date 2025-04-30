@@ -1,0 +1,19 @@
+[ {
+  "id" : 1,
+  "name" : "itsflatname",
+  "coordinates" : {
+    "x" : 1.0,
+    "y" : 1
+  },
+  "creationDate" : "2025-02-16T16:34:11.9577199Z",
+  "area" : 100.0,
+  "numberOfRooms" : 5,
+  "timeToMetroOnFoot" : 10.0,
+  "centralHeating" : true,
+  "furnish" : "FINE",
+  "house" : {
+    "name" : "itshousename",
+    "year" : 20,
+    "numberOfFlatsOnFloor" : 5
+  }
+} ]
