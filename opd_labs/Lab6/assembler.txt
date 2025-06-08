@@ -1,0 +1,75 @@
+ORG 0x00
+V0: WORD $default, 0x180
+V1: WORD $default, 0x180
+V2: WORD $handler_v2, 0x180
+V3: WORD $handler_v3, 0x180
+V4: WORD $default, 0x180
+V5: WORD $default, 0x180
+V6: WORD $default, 0x180
+V7: WORD $default, 0x180
+
+default: IRET
+
+ORG 0x029
+x: WORD 0x0021
+x_max: WORD 0x0021 ; 33 
+x_min: WORD 0xFFE2 ; -30
+
+
+start:	DI
+		CLA
+		LD #0xA
+		OUT 5 ; Привязка вектора прерывания 2 к ВУ-2
+		LD #0xB
+		OUT 7 ; Привязка вектора прерывания 3 к ВУ-3
+		EI
+		JUMP main
+		
+main:  DI
+	   LD x
+	   SUB #0x003
+	   CALL check_greater
+	   CALL check_less
+	   ST x
+	   EI
+	   JUMP main
+		
+		
+check:	CALL check_greater
+		CALL check_less
+		RET
+		
+check_greater:  CMP x_max
+				BEQ return
+				BMI return
+				LD x_max
+				RET
+				
+check_less:		CMP x_min
+				BEQ return
+				BPL return
+				LD x_max
+				RET
+				
+				
+handler_v3: LD x
+			ASL
+			ASL
+			NEG
+			ADD #0x007
+			OUT 6 ; Вывод на ВУ-3
+		;	HLT
+			IRET
+				
+handler_v2: DI
+			IN 4 ; Загрузка данных из ВУ-3
+			CALL check
+		    ST x 
+		;	HLT
+			EI
+			IRET
+	
+			 
+			  
+
+return: RET
