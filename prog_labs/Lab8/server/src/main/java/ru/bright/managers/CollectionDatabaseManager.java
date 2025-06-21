@@ -212,10 +212,10 @@ public class CollectionDatabaseManager {
       //  server.getLogger().log(Level.INFO, "Flat to update = " + flat.toString());
         String sql = "UPDATE flats SET flat_data = ?::jsonb WHERE id = ?";
         server.getLogger().log(Level.INFO, "Updating flat with id " + serializeFlatToJson(flat));
-        try (Connection connection = server.getDatabaseManger().getConnection(); // Используй свой dbManager
+        try (Connection connection = server.getDatabaseManger().getConnection(); 
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, serializeFlatToJson(flat)); // Устанавливаем ID в плейсхолдер
-            ps.setLong(2, flat.getId()); // Устанавливаем ID в плейсхолдер
+            ps.setString(1, serializeFlatToJson(flat)); 
+            ps.setLong(2, flat.getId()); 
             int rows = ps.executeUpdate();
             if (rows > 0) {
                 server.getLogger().log(Level.INFO, "Flat with ID was updated: " + flat.getName());
@@ -230,9 +230,9 @@ public class CollectionDatabaseManager {
 
     public boolean deleteFlatById(long id) throws SQLException {
         String sql = "DELETE FROM flats WHERE id = ?";
-        try (Connection connection = server.getDatabaseManger().getConnection(); // Используй свой dbManager
+        try (Connection connection = server.getDatabaseManger().getConnection(); 
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setLong(1, id); // Устанавливаем ID в плейсхолдер
+            ps.setLong(1, id); 
 
             int rows = ps.executeUpdate();
 
