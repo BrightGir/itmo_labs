@@ -28,7 +28,7 @@ public class AuthManager {
         Set<Flat> flats = new HashSet<>();
         String sql = "SELECT login, password_hash FROM users";
 
-        try (Connection connection = server.getDatabaseManger().getConnection(); // Используй свой dbManager
+        try (Connection connection = server.getDatabaseManger().getConnection(); 
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
