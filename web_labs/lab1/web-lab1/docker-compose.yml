@@ -1,0 +1,28 @@
+services:
+  # Наш Java-сервер
+  java-app:
+    build: .
+    # Используем простое имя сервиса
+    # container_name не обязателен
+    restart: always
+    networks:
+      - app-net
+
+  # Наш Apache
+  apache:
+    # Используем самый последний и надежный образ
+    image: httpd:latest 
+    ports:
+      - "8080:80"
+    volumes:
+      # Прокидываем наш кастомный httpd.conf
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      # Прокидываем папку со статикой
+      - ./static:/usr/local/apache2/htdocs
+    depends_on:
+      - java-app
+    networks:
+      - app-net
+
+networks:
+  app-net: {}
