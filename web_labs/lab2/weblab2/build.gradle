@@ -1,0 +1,30 @@
+plugins {
+    id 'war'
+}
+
+group = 'ru.bright'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+
+    providedCompile 'jakarta.platform:jakarta.jakartaee-api:8.0.0'
+    implementation 'javax.servlet:jstl:1.2'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+war {
+    // Имя итогового файла
+    archiveFileName = 'weblab2.war'
+}

@@ -1,0 +1,29 @@
+body {
+    font-family: 'Segoe UI', Roboto;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.result-container {
+    width: 500px;
+    margin: auto;
+}
+
+.result-container h2 {
+    text-align: center;
+}
+
+main a {
+    display: block;
+    text-align: center;
+}
+
+.result-table td:first-child {
+    font-weight: bold;
+}
+
+.result-table td:nth-child(2) {
+    padding-left: 10px;
+}

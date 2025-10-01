@@ -1,0 +1,114 @@
+
+body {
+    font-family: 'Segoe UI', Roboto;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+body h2 {
+    text-align: center;
+}
+
+header {
+    margin: 20px;
+    padding: 10px;
+    text-align: center;
+    background-color: white;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 2fr 3fr 3fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.form-container, .graph-container, .results-container {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.graph-wrapper svg {
+    display: block;
+    margin: auto;
+}
+
+.graph-wrapper svg text {
+    pointer-events: none;
+    user-select: none;
+}
+
+.results-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-container {
+    height: 800px;
+    overflow-y: auto;
+}
+
+.results-container table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+
+.results-container th,
+.results-container td {
+    padding: 12px;
+
+}
+.results-container thead th:nth-child(1),
+.results-container thead th:nth-child(2),
+.results-container thead th:nth-child(3),
+.results-container thead th:nth-child(4),
+.results-container thead th:nth-child(6) {
+    width: 15%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#x-input {
+    width: 50%;
+}
+
+#submit-button {
+    align-items: center;
+}
+
+.error-message {
+    color: RED;
+    font-size: 13px;
+    min-height: 18px;
+    margin-top: 5px;
+}
+
+#submit-button {
+    display: block;
+    width: 50%;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#submit-button:hover {
+    background-color: #218838;
+}
+
+.button-group button.selected {
+    font-weight: bold;
+    transform: scale(1.05);
+}
