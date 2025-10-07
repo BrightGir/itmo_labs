@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Лабораторная работа №3</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <h:outputStylesheet library="css" name="main_styles.css"/>
+    <script type="module" src="#{request.contextPath}/js/graph-handler.js"></script>
+    <script type="module" src="#{request.contextPath}/js/batman.js"></script>
+</h:head>
+<h:body>
+    <header class="header">
+        <h1>Лабораторная работа №3</h1>
+        <p>Фонарева Виктория Сергеевна</p>
+        <p>Группа: P3210</p>
+        <p>Вариант 1705</p>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2>Параметры</h2>
+            <h:form id="check-form">
+
+                <div class="form-group">
+                    <h:outputLabel value="Координата X"/>
+                    <div class="x-radio">
+                        <h:selectOneRadio id="x-input" value="#{formBean.x}" required="true"
+                                          requiredMessage="Выберите значение X.">
+                            <f:selectItem itemValue="-4" itemLabel="-4"/>
+                            <f:selectItem itemValue="-3" itemLabel="-3"/>
+                            <f:selectItem itemValue="-2" itemLabel="-2"/>
+                            <f:selectItem itemValue="-1" itemLabel="-1"/>
+                            <f:selectItem itemValue="0" itemLabel="0"/>
+                            <f:selectItem itemValue="1" itemLabel="1"/>
+                            <f:selectItem itemValue="2" itemLabel="2"/>
+                            <f:selectItem itemValue="3" itemLabel="3"/>
+                            <f:selectItem itemValue="4" itemLabel="4"/>
+                            <f:validateRequired validatorMessage="Выберите значение X."/>
+                        </h:selectOneRadio>
+                    </div>
+                    <h:message for="x-input" class="error-message"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel for="y-input" value="Координата Y (от -3 до 5)"/>
+                   <!-- <p:inputNumber id="y-input" value="#{formBean.y}"
+                                   minValue="-3" maxValue="5"
+                                   placeholder="От -3 до 5"
+                                   validatorMessage="Y должен быть числом от -3 до 5"
+                                   required="true"
+                                   requiredMessage="Выберите значение Y."
+                                   decimalPlaces="3">
+                    </p:inputNumber> -->
+                    <p:inputText id="y-input" value="#{formBean.y}"
+                                 onblur="this.value = this.value.replace(',', '.');"
+                                 placeholder="От -3 до 5"
+                                 required="true"
+                                 requiredMessage="Укажите значение Y."
+                                 converterMessage="Y должен быть числом"
+                                 validatorMessage="Y должен быть числом от -3 до 5">
+                        <f:validateDoubleRange minimum="-3" maximum="5"/>
+                        <f:converter converterId="javax.faces.Double"/>
+                    </p:inputText>
+                    <h:message for="y-input" class="error-message"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel for="r-input" value="Радиус R (от 1 до 4)"/>
+                    <h:panelGrid columns="1">
+                        <p:inputNumber id="r-input" value="#{formBean.r}"
+                                       minValue="1" maxValue="4"
+                                       validatorMessage="Y должен быть числом от 1 до 4"
+                                       required="true"
+                                       requiredMessage="Выберите значение R." styleClass="read-only">
+                        </p:inputNumber>
+                        <h:message for="r-input" class="error-message"/>
+                        <p:slider id="r-slider" for="r-input" minValue="1" maxValue="4" step="0.25"
+                                  onSlide="window.updateGraphWithValue(ui.value)">
+                            <f:validateRequired/>
+                            <f:validateDoubleRange minimum="1" maximum="4"/>
+                        </p:slider>
+                    </h:panelGrid>
+                </div>
+
+                <h:inputHidden id="formClientTimeStamp" value="#{formBean.clientTimeStamp}"/>
+                <h:inputHidden id="formClientTimeZone" value="#{formBean.clientTimeZone}"/>
+                <p:commandButton value="Проверить" action="#{formBean.submit}"
+                                 onstart="window.setFormTimestamp()"
+                                 update="check-form results-container hiddenForm:hiddenData" ajax="true"
+                                 oncomplete="if (args &amp;&amp; !args.validationFailed) window.updateGraph()"
+                                 styleClass="custom-button"/>
+            </h:form>
+        </div>
+
+        <div class="graph-container">
+            <div class="graph-wrapper">
+                <h2>График</h2>
+                <svg id="graph-svg" width="700" height="700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700"
+                     onclick="setGraphClickValues(event); submitFromGraph()">
+                    <g id="shapes" fill="#FF6B35">
+                        <path id="graph-path" d="" stroke="black" stroke-width="0.4"></path>
+
+                    </g>
+                    <g id="labels" fill="black" font-size="14">
+                        <text x="360" y="20">Y</text>
+                        <text x="680" y="340">X</text>
+                        <text id="label-x-r" x="445" y="240"></text>
+                        <text id="label-x-r-half" x="345" y="240"></text>
+                        <text id="label-x-neg-r-half" x="140" y="240"></text>
+                        <text id="label-x-neg-r" x="40" y="240"></text>
+
+                        <text id="label-y-r" x="260" y="55"></text>
+                        <text id="label-y-r-half" x="260" y="155"></text>
+                        <text id="label-y-neg-r-half" x="260" y="355"></text>
+                        <text id="label-y-neg-r" x="260" y="455"></text>
+                    </g>
+                    <g id="axes" stroke="black">
+                        <line x1="350" y1="0" x2="350" y2="700"></line>
+                        <polygon points="350,0 345,15 355,15" fill="black"></polygon>
+                        <line x1="0" y1="350" x2="700" y2="350"></line>
+                        <polygon points="700,350 685,345 685,355" fill="black"></polygon>
+                    </g>
+                    <g id="history-points"></g>
+                </svg>
+            </div>
+        </div>
+
+     <!--   <hr style="display: none;"/> -->
+        <h:panelGroup id="results-container" styleClass="results-container" layout="block">
+            <h2>История проверок</h2>
+            <div class="table-wrapper">
+            <p:dataTable id="results-table" value="#{resultHistoryBean.instance.results}"
+                              var="result" paginator="true" rows="10"
+                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                     <p:column headerText="X">
+                         <h:outputText value="#{result.formattedX}"/>
+                     </p:column>
+                     <p:column headerText="Y">
+                         <h:outputText value="#{result.formattedY}"/>
+                     </p:column>
+                     <p:column headerText="R">
+                         <h:outputText value="#{result.formattedR}"/>
+                     </p:column>
+                     <p:column headerText="Результат">
+                         <h:outputText value="#{result.hit ? 'Попадание' : 'Промах'}"/>
+                     </p:column>
+                     <p:column headerText="Время проверки">
+                         <h:outputText value="#{result.formattedTimestamp}">
+                             <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss"/>
+                         </h:outputText>
+                     </p:column>
+                     <p:column headerText="Время выполнения (мс)">
+                         <h:outputText value="#{result.formattedExecutionTime}"/>
+                     </p:column>
+
+                     <p:column headerText="Действия" styleClass="action-column-container">
+                         <div class="action-column-wrapper">
+                         <p:commandButton icon="pi pi-trash" title="Удалить"
+                                          actionListener="#{resultHistoryBean.instance.deleteResult(result)}"
+                                          update="results-container hiddenForm:hiddenData"
+                                          process="@this"
+                                          styleClass="delete-button"
+                                          oncomplete="window.updateGraph()"/>
+                         </div>
+                     </p:column>
+                 </p:dataTable>
+            </div>
+        </h:panelGroup>
+    </main>
+
+    <div class="navigation-wrapper">
+         <div class="navigation">
+             <h:form>
+                 <p:commandButton value="На стартовую страницу" action="#{navigationController.goToStartPage}" ajax="false" styleClass="custom-button"/>
+             </h:form>
+         </div>
+    </div>
+
+
+
+    <h:form id="hiddenForm">
+        <h:panelGroup id="hiddenData" style="display:none;">
+            <h:outputText id="resultsJson" value="#{resultHistoryBean.instance.resultsAsJson}"/>
+            <h:outputText id="currentR" value="#{formBean.r}"/>
+        </h:panelGroup>
+    </h:form>
+
+
+    <h:form id="submit-from-graph-form">
+        <h:inputHidden id="graphX" value="#{formBean.x}"/>
+        <h:inputHidden id="graphY" value="#{formBean.y}"/>
+        <h:inputHidden id="graphR" value="#{formBean.r}"/>
+        <h:inputHidden id="timeStamp" value="#{formBean.clientTimeStamp}"/>
+        <h:inputHidden id="timeZone" value="#{formBean.clientTimeZone}"/>
+        <p:remoteCommand name="submitFromGraph"
+                         action="#{formBean.submit}"
+                         update="results-container hiddenForm:hiddenData"
+                         oncomplete="window.updateGraph()"/>
+    </h:form>
+</h:body>
+</html>

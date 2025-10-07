@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Лабораторная работа №3</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <h:outputStylesheet library="css" name="start_styles.css"/>
+    <script src="#{request.contextPath}/js/clock.js"></script>
+</h:head>
+<h:body>
+    <header>
+        <h1>Лабораторная работа №3</h1>
+        <p>Фонарева Виктория P3210</p>
+        <p>Вариант 1705</p>
+    </header>
+
+    <main>
+        <h3>Текущее время:</h3>
+        <p id="clock"></p>
+        <h:form>
+            <p:commandButton value="На главную" action="#{navigationController.goToMainPage}" ajax="false" styleClass="custom-button"/>
+        </h:form>
+    </main>
+</h:body>
+</html>
+
+

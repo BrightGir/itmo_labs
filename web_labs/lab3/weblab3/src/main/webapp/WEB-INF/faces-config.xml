@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
+              version="2.3">
+
+    <navigation-rule>
+        <from-view-id>/pages/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>main</from-outcome>
+            <to-view-id>/pages/main.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/pages/main.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>start</from-outcome>
+            <to-view-id>/pages/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+
+    <managed-bean>
+        <managed-bean-name>formBean</managed-bean-name>
+        <managed-bean-class>ru.bright.weblab3.FormBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>resultHistoryBean</property-name>
+            <property-class>ru.bright.weblab3.ResultHistoryBean</property-class>
+            <value>#{resultHistoryBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>resultDAO</managed-bean-name>
+        <managed-bean-class>ru.bright.weblab3.db.ResultDAO</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>resultHistoryBean</managed-bean-name>
+        <managed-bean-class>ru.bright.weblab3.ResultHistoryBean</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+        <managed-property>
+            <property-name>resultDAO</property-name>
+            <property-class>ru.bright.weblab3.db.ResultDAO</property-class>
+            <value>#{resultDAO}</value>
+        </managed-property>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>navigationController</managed-bean-name>
+        <managed-bean-class>ru.bright.weblab3.NavigationController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+</faces-config>

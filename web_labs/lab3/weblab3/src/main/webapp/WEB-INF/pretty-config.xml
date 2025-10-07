@@ -1,0 +1,15 @@
+<pretty-config xmlns="http://ocpsoft.org/schema/pretty-faces/1.0-SNAPSHOT"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://ocpsoft.org/schema/pretty-faces/1.0-SNAPSHOT http://ocpsoft.org/xml/ns/pretty-faces/pretty-faces-1.0.0.xsd">
+
+    <url-mapping id="main-page">
+        <pattern value="/main" />
+        <view-id value="/pages/main.xhtml" />
+    </url-mapping>
+
+    <url-mapping id="start-page">
+        <pattern value="/" />
+        <view-id value="/pages/index.xhtml" />
+    </url-mapping>
+
+</pretty-config>
