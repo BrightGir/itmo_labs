@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
 
 @Service
 public class ConflictExperimentService {
@@ -32,34 +31,30 @@ public class ConflictExperimentService {
         gateway.delete(EtcdKeys.CONFLICT);
         runTogether(writers, () -> {
             long oldValue = currentValue();
-            return () -> gateway.put(EtcdKeys.CONFLICT, Long.toString(oldValue + 1));
+            gateway.put(EtcdKeys.CONFLICT, Long.toString(oldValue + 1));
         });
         long blindWriteResult = currentValue();
 
         gateway.delete(EtcdKeys.CONFLICT);
         AtomicLong conflicts = new AtomicLong();
-        runTogether(writers, () -> {
-            Optional<StoredValue> initial = gateway.get(EtcdKeys.CONFLICT);
-            return () -> incrementWithCas(initial, conflicts);
-        });
+        runTogether(writers, () -> incrementWithCas(conflicts));
 
         return new ConflictExperimentResponse(writers, blindWriteResult, currentValue(), conflicts.get());
     }
 
-    private void incrementWithCas(Optional<StoredValue> firstRead, AtomicLong conflicts) {
-        Optional<StoredValue> stored = firstRead;
+    private void incrementWithCas(AtomicLong conflicts) {
         while (true) {
+            Optional<StoredValue> stored = gateway.get(EtcdKeys.CONFLICT);
             long oldValue = stored.map(value -> Long.parseLong(value.value())).orElse(0L);
             long revision = stored.map(StoredValue::modificationRevision).orElse(0L);
             if (gateway.compareAndSet(EtcdKeys.CONFLICT, revision, Long.toString(oldValue + 1))) {
                 return;
             }
             conflicts.incrementAndGet();
-            stored = gateway.get(EtcdKeys.CONFLICT);
         }
     }
 
-    private void runTogether(int writers, Supplier<Runnable> preparation) {
+    private void runTogether(int writers, Runnable action) {
         ExecutorService pool = Executors.newFixedThreadPool(writers);
         CountDownLatch ready = new CountDownLatch(writers);
         CountDownLatch start = new CountDownLatch(1);
@@ -67,7 +62,6 @@ public class ConflictExperimentService {
             List<Future<?>> tasks = new ArrayList<>();
             for (int i = 0; i < writers; i++) {
                 tasks.add(pool.submit(() -> {
-                    Runnable action = preparation.get();
                     ready.countDown();
                     await(start);
                     action.run();

@@ -132,7 +132,7 @@
         </section>
 
         <section id="experiment" class="panel">
-          <div class="card"><h2>Конкурентная запись</h2><p>POST /api/experiments/write-conflict · сравнение blind write и CAS</p>
+          <div class="card"><h2>Конкурентная запись</h2><p>POST /api/experiments/write-conflict · сравнение записи без проверки и с проверкой ревизии</p>
             <form id="run-experiment" class="grid">
               <label class="field">Количество писателей<input name="writers" type="number" min="2" max="100" required value="24"></label>
               <div class="actions full"><button class="primary" type="submit">Запустить эксперимент</button></div>
@@ -292,7 +292,7 @@
       if (result) {
         const item = document.createElement('div');
         item.className = 'item';
-        item.textContent = `Blind write: ${result.blindWriteFinalValue} · CAS: ${result.casFinalValue} · конфликты CAS: ${result.casConflicts}`;
+        item.textContent = `Писателей: ${result.writers} · Без проверки: ${result.blindWriteFinalValue} · С CAS: ${result.casFinalValue} · Повторных попыток CAS: ${result.casConflicts}`;
         summary.append(item);
       }
     });
