@@ -60,6 +60,7 @@
     #request-line { padding: 13px 18px 0; color: #6e5bd4; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
     pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 65vh; overflow-y: auto; margin: 0; padding: 14px 18px 20px; color: #40506a; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; }
     .hint { color: #8994a7; font-size: 12px; margin: 8px 0 0; }
+    .card .selected-event { margin: 0 0 16px; padding: 10px 12px; border-radius: 9px; background: #f6f5fc; color: #6250bd; font-weight: 700; }
     @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .result { position: static; } }
     @media (max-width: 560px) { .shell { padding: 22px 15px 50px; } .hero { display: block; } .status { margin-top: 16px; } .grid { grid-template-columns: 1fr; } .card { padding: 18px; } .tab { flex: 1 1 auto; } }
   </style>
@@ -100,6 +101,7 @@
 
         <section id="drafts" class="panel">
           <div class="card"><h2>Временная заявка</h2><p>POST /api/drafts · заявка автоматически исчезнет после TTL</p>
+            <p id="selected-event" class="selected-event" hidden></p>
             <form id="create-draft" class="grid">
               <label class="field full">ID события<input name="eventId" id="draft-event-id" required placeholder="Создайте или выберите событие"></label>
               <label class="field">ID менеджера<input name="managerId" required value="manager-1"></label>
@@ -191,9 +193,21 @@
       return encodeURIComponent(input.value.trim());
     }
 
-    function useEvent(id) {
-      $('#event-id').value = id;
-      $('#draft-event-id').value = id;
+    function selectTab(name) {
+      document.querySelectorAll('.tab').forEach(button => button.setAttribute('aria-selected', String(button.dataset.tab === name)));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === name));
+    }
+
+    function useEvent(event, openDraft = false) {
+      $('#event-id').value = event.id;
+      $('#draft-event-id').value = event.id;
+      const selected = $('#selected-event');
+      selected.textContent = `Выбрано событие: ${event.title}`;
+      selected.hidden = false;
+      if (openDraft) {
+        selectTab('drafts');
+        $('#draft-event-id').focus();
+      }
     }
 
     function renderEvents(events) {
@@ -222,8 +236,8 @@
         const pick = document.createElement('button');
         pick.className = 'secondary';
         pick.type = 'button';
-        pick.textContent = 'Выбрать';
-        pick.addEventListener('click', () => useEvent(event.id));
+        pick.textContent = 'Выбрать для заявки';
+        pick.addEventListener('click', () => useEvent(event, true));
         heading.append(title, kind);
         item.append(heading, id, detail, document.createElement('br'), pick);
         list.append(item);
@@ -238,10 +252,7 @@
       }
     }
 
-    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(button => button.setAttribute('aria-selected', String(button === tab)));
-      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === tab.dataset.tab));
-    }));
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => selectTab(tab.dataset.tab)));
 
     $('#create-event').addEventListener('submit', async event => {
       event.preventDefault();
@@ -251,7 +262,7 @@
         title: values.title.trim(), type: values.type.trim(),
         startsAt: new Date(values.startsAt).toISOString(), capacity: Number(values.capacity)
       }, event.submitter);
-      if (created?.id) { useEvent(created.id); state.events.unshift(created); renderEvents(state.events); }
+      if (created?.id) { useEvent(created); state.events.unshift(created); renderEvents(state.events); }
     });
 
     $('#create-draft').addEventListener('submit', async event => {
