@@ -95,7 +95,6 @@ public class ConflictExperimentService {
         try {
             latch.await();
         } catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
             throw new IllegalStateException(exception);
         }
     }

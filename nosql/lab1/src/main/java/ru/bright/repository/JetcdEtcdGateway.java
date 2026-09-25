@@ -41,7 +41,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
                     .getKvs();
             return values.stream().findFirst().map(this::toStoredValue);
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -55,7 +55,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
                     .map(this::toStoredValue)
                     .toList();
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -64,7 +64,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
         try {
             keyValueClient.put(bytes(key), bytes(value)).get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -75,7 +75,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
             PutOption option = PutOption.builder().withLeaseId(leaseId).build();
             keyValueClient.put(bytes(key), bytes(value), option).get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -90,7 +90,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
                     .get(timeoutMillis, TimeUnit.MILLISECONDS);
             return response.isSucceeded();
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -108,7 +108,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
                     .get(timeoutMillis, TimeUnit.MILLISECONDS);
             return response.isSucceeded();
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -117,7 +117,7 @@ public class JetcdEtcdGateway implements EtcdGateway {
         try {
             keyValueClient.delete(bytes(key)).get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (Exception exception) {
-            throw storageFailure(exception);
+            throw new StorageUnavailableException("Etcd operation failed", exception);
         }
     }
 
@@ -127,12 +127,5 @@ public class JetcdEtcdGateway implements EtcdGateway {
 
     private static ByteSequence bytes(String value) {
         return ByteSequence.from(value, StandardCharsets.UTF_8);
-    }
-
-    private static StorageUnavailableException storageFailure(Exception exception) {
-        if (exception instanceof InterruptedException) {
-            Thread.currentThread().interrupt();
-        }
-        return new StorageUnavailableException("Etcd operation failed", exception);
     }
 }

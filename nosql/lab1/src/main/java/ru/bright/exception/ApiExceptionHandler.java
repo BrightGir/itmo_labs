@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
-import java.time.Instant;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -17,8 +16,7 @@ public class ApiExceptionHandler {
     Map<String, Object> validation() {
         return Map.of(
                 "error", "validation_failed",
-                "message", "Request fields are invalid",
-                "timestamp", Instant.now());
+                "message", "Request fields are invalid");
     }
 
     @ExceptionHandler({IllegalArgumentException.class, HandlerMethodValidationException.class})
@@ -48,7 +46,6 @@ public class ApiExceptionHandler {
     private Map<String, Object> error(String code, RuntimeException exception) {
         return Map.of(
                 "error", code,
-                "message", exception.getMessage(),
-                "timestamp", Instant.now());
+                "message", exception.getMessage());
     }
 }
