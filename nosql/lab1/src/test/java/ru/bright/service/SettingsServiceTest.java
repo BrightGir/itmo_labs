@@ -25,14 +25,14 @@ class SettingsServiceTest {
 
     @Test
     void cachesSettingsAndInvalidatesCacheOnUpdate() {
-        ManagerSettings initial = new ManagerSettings("manager-1", "ru", "dark", 20);
+        ManagerSettings initial = new ManagerSettings("manager-1", "ru", "dark");
         service.saveSettings(initial);
 
         assertThat(service.getSettings("manager-1")).contains(initial);
-        gateway.overwriteSettings("manager-1", new ManagerSettings("manager-1", "en", "light", 10));
+        gateway.overwriteSettings("manager-1", new ManagerSettings("manager-1", "en", "light"));
         assertThat(service.getSettings("manager-1")).contains(initial);
 
-        ManagerSettings updated = new ManagerSettings("manager-1", "en", "light", 50);
+        ManagerSettings updated = new ManagerSettings("manager-1", "en", "light");
         service.saveSettings(updated);
         assertThat(service.getSettings("manager-1")).contains(updated);
     }

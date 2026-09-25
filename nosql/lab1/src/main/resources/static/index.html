@@ -59,7 +59,6 @@
     #result-status.bad { color: #d45663; }
     #request-line { padding: 13px 18px 0; color: #6e5bd4; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
     pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 65vh; overflow-y: auto; margin: 0; padding: 14px 18px 20px; color: #40506a; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .hint { color: #8994a7; font-size: 12px; margin: 8px 0 0; }
     .card .selected-event { margin: 0 0 16px; padding: 10px 12px; border-radius: 9px; background: #f6f5fc; color: #6250bd; font-weight: 700; }
     @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .result { position: static; } }
     @media (max-width: 560px) { .shell { padding: 22px 15px 50px; } .hero { display: block; } .status { margin-top: 16px; } .grid { grid-template-columns: 1fr; } .card { padding: 18px; } .tab { flex: 1 1 auto; } }
@@ -127,7 +126,6 @@
               <label class="field full">ID менеджера<input name="managerId" id="settings-manager-id" required value="manager-1"></label>
               <label class="field">Язык<input name="language" required value="ru"></label>
               <label class="field">Тема<select name="theme"><option value="light">light</option><option value="dark">dark</option></select></label>
-              <label class="field">Размер страницы<input name="pageSize" type="number" min="1" max="100" required value="20"></label>
               <div class="actions full"><button class="primary" type="submit">Сохранить</button><button class="secondary" type="button" data-action="get-settings">Получить настройки</button></div>
             </form>
           </div>
@@ -281,7 +279,7 @@
       const path = `/api/managers/${encodeURIComponent(values.managerId.trim())}/settings`;
       await request('PUT', path, {
         managerId: values.managerId.trim(), language: values.language.trim(),
-        theme: values.theme, pageSize: Number(values.pageSize)
+        theme: values.theme
       }, event.submitter);
     });
 
