@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: library-etcd
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+app:
+  etcd:
+    endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
+  etcd-timeout-millis: 3000
+  settings-cache-ttl-seconds: 60
+
+server:
+  port: ${SERVER_PORT:8080}

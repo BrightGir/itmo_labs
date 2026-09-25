@@ -1,0 +1,38 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.6.14
+    container_name: library-etcd
+    command:
+      - /usr/local/bin/etcd
+      - --name=node1
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://etcd:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://etcd:2380
+      - --initial-cluster=node1=http://etcd:2380
+      - --initial-cluster-state=new
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd-data:/etcd-data
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://127.0.0.1:2379", "endpoint", "health"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+
+  app:
+    build: .
+    container_name: library-app
+    environment:
+      ETCD_ENDPOINTS: http://etcd:2379
+    ports:
+      - "18080:8080"
+    depends_on:
+      etcd:
+        condition: service_healthy
+
+volumes:
+  etcd-data:
+    name: library-etcd-data

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library API · Лабораторная №1</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #243046; background: #f4f6fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1220px; margin: auto; padding: 36px 24px 70px; }
+    .hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .eyebrow { color: #6855c6; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 8px 0 8px; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.045em; }
+    .hero p { margin: 0; color: #69758b; line-height: 1.55; }
+    .status { display: inline-flex; align-items: center; gap: 8px; flex: none; margin-top: 8px; padding: 10px 13px; border: 1px solid #dfe3ef; border-radius: 99px; background: white; color: #69758b; font-size: 13px; font-weight: 600; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #adb5c6; }
+    .status.ok::before { background: #34b985; }
+    .status.error::before { background: #e56772; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 22px; align-items: start; }
+    .main { min-width: 0; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .tab { border: 1px solid #dfe3ef; background: white; color: #647088; border-radius: 10px; padding: 10px 15px; font-size: 14px; font-weight: 700; }
+    .tab[aria-selected="true"] { color: white; border-color: #6e5bd4; background: #6e5bd4; box-shadow: 0 6px 14px #6e5bd42a; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .card, .result { background: white; border: 1px solid #e1e5ef; border-radius: 16px; box-shadow: 0 8px 28px #2534590b; }
+    .card { padding: 23px; margin-bottom: 16px; }
+    .card h2 { margin: 0 0 5px; font-size: 19px; letter-spacing: -.025em; }
+    .card p { color: #778297; font-size: 14px; line-height: 1.5; margin: 0 0 19px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; color: #46536a; font-size: 13px; font-weight: 700; }
+    .field.full { grid-column: 1 / -1; }
+    input, select, textarea { width: 100%; min-height: 42px; border: 1px solid #d9dfeb; border-radius: 9px; background: #fff; padding: 9px 11px; color: #263247; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #7a68d9; box-shadow: 0 0 0 3px #7a68d91e; }
+    textarea { min-height: 76px; resize: vertical; }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .primary, .secondary { border-radius: 9px; padding: 10px 15px; min-height: 41px; font-size: 14px; font-weight: 750; }
+    .primary { background: #6e5bd4; color: white; border: 1px solid #6e5bd4; }
+    .primary:hover { background: #5b47c6; }
+    .secondary { background: #f6f5fc; color: #6250bd; border: 1px solid #e7e2fb; }
+    .secondary:hover { background: #ece8fa; }
+    button:disabled { cursor: wait; opacity: .6; }
+    .list { display: grid; gap: 10px; margin-top: 15px; }
+    .item { border: 1px solid #e5e9f1; border-radius: 11px; padding: 13px 15px; background: #fbfcff; }
+    .item-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+    .item strong { font-size: 14px; }
+    .item small { color: #778297; }
+    .item code { display: block; overflow-wrap: anywhere; margin-top: 7px; color: #6855c6; font-size: 12px; }
+    .item button { margin-top: 10px; padding: 6px 9px; font-size: 12px; }
+    .empty { color: #8791a3; font-size: 14px; margin: 0; }
+    .result { position: sticky; top: 22px; overflow: hidden; }
+    .result-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; border-bottom: 1px solid #e8ebf2; padding: 17px 18px; }
+    .result-head h2 { margin: 0; font-size: 15px; }
+    #result-status { color: #788399; font-size: 12px; font-weight: 700; }
+    #result-status.good { color: #19966b; }
+    #result-status.bad { color: #d45663; }
+    #request-line { padding: 13px 18px 0; color: #6e5bd4; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 65vh; overflow-y: auto; margin: 0; padding: 14px 18px 20px; color: #40506a; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .hint { color: #8994a7; font-size: 12px; margin: 8px 0 0; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .result { position: static; } }
+    @media (max-width: 560px) { .shell { padding: 22px 15px 50px; } .hero { display: block; } .status { margin-top: 16px; } .grid { grid-template-columns: 1fr; } .card { padding: 18px; } .tab { flex: 1 1 auto; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div><div class="eyebrow">NoSQL · Etcd · Лабораторная №1</div><h1>Library API</h1><p>Создавайте события и заявки, проверяйте TTL, счётчик просмотров и конкурентную запись.</p></div>
+      <span id="connection" class="status">Проверяем API…</span>
+    </header>
+    <div class="layout">
+      <main class="main">
+        <nav class="tabs" aria-label="Разделы API">
+          <button class="tab" type="button" data-tab="events" aria-selected="true">События</button>
+          <button class="tab" type="button" data-tab="drafts" aria-selected="false">Заявки и заказы</button>
+          <button class="tab" type="button" data-tab="settings" aria-selected="false">Настройки</button>
+          <button class="tab" type="button" data-tab="experiment" aria-selected="false">Эксперимент</button>
+        </nav>
+
+        <section id="events" class="panel active">
+          <div class="card"><h2>Новое событие</h2><p>POST /api/events</p>
+            <form id="create-event" class="grid">
+              <label class="field full">Название<input name="title" required placeholder="Презентация книги"></label>
+              <label class="field">Тип<input name="type" required value="PRESENTATION"></label>
+              <label class="field">Начало<input name="startsAt" type="datetime-local" required></label>
+              <label class="field">Вместимость<input name="capacity" type="number" min="1" value="80" required></label>
+              <div class="actions"><button class="primary" type="submit">Создать событие</button></div>
+            </form>
+          </div>
+          <div class="card"><h2>Список событий</h2><p>GET /api/events · выберите событие для следующих действий</p>
+            <button id="refresh-events" class="secondary" type="button">Обновить список</button><div id="event-list" class="list"><p class="empty">Загрузка…</p></div>
+          </div>
+          <div class="card"><h2>Событие и просмотры</h2><p>GET /api/events/{id} · GET/POST /api/events/{id}/views</p>
+            <label class="field">ID события<input id="event-id" required placeholder="UUID события"></label>
+            <div class="actions"><button class="secondary" type="button" data-action="get-event">Получить событие</button><button class="secondary" type="button" data-action="get-views">Просмотры</button><button class="primary" type="button" data-action="add-view">+1 просмотр</button></div>
+          </div>
+        </section>
+
+        <section id="drafts" class="panel">
+          <div class="card"><h2>Временная заявка</h2><p>POST /api/drafts · заявка автоматически исчезнет после TTL</p>
+            <form id="create-draft" class="grid">
+              <label class="field full">ID события<input name="eventId" id="draft-event-id" required placeholder="Создайте или выберите событие"></label>
+              <label class="field">ID менеджера<input name="managerId" required value="manager-1"></label>
+              <label class="field">Количество<input name="quantity" type="number" min="1" value="2" required></label>
+              <label class="field">TTL, секунд<input name="ttlSeconds" type="number" min="5" max="86400" value="30" required></label>
+              <label class="field full">Комментарий<textarea name="comment" placeholder="Например, первый ряд"></textarea></label>
+              <div class="actions"><button class="primary" type="submit">Создать заявку</button></div>
+            </form>
+          </div>
+          <div class="card"><h2>Проверить или оформить</h2><p>GET /api/drafts/{id} · POST /api/drafts/{id}/submit</p>
+            <label class="field">ID заявки<input id="draft-id" required placeholder="UUID заявки"></label>
+            <div class="actions"><button class="secondary" type="button" data-action="get-draft">Получить заявку</button><button class="primary" type="button" data-action="submit-draft">Оформить заказ</button></div>
+          </div>
+          <div class="card"><h2>Получить заказ</h2><p>GET /api/orders/{id}</p>
+            <label class="field">ID заказа<input id="order-id" required placeholder="UUID заказа"></label>
+            <div class="actions"><button class="secondary" type="button" data-action="get-order">Получить заказ</button></div>
+          </div>
+        </section>
+
+        <section id="settings" class="panel">
+          <div class="card"><h2>Настройки менеджера</h2><p>GET/PUT /api/managers/{managerId}/settings · повторный GET показывает работу кэша</p>
+            <form id="save-settings" class="grid">
+              <label class="field full">ID менеджера<input name="managerId" id="settings-manager-id" required value="manager-1"></label>
+              <label class="field">Язык<input name="language" required value="ru"></label>
+              <label class="field">Тема<select name="theme"><option value="light">light</option><option value="dark">dark</option></select></label>
+              <label class="field">Размер страницы<input name="pageSize" type="number" min="1" max="100" required value="20"></label>
+              <div class="actions full"><button class="primary" type="submit">Сохранить</button><button class="secondary" type="button" data-action="get-settings">Получить настройки</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section id="experiment" class="panel">
+          <div class="card"><h2>Конкурентная запись</h2><p>POST /api/experiments/write-conflict · сравнение blind write и CAS</p>
+            <form id="run-experiment" class="grid">
+              <label class="field">Количество писателей<input name="writers" type="number" min="2" max="100" required value="24"></label>
+              <div class="actions full"><button class="primary" type="submit">Запустить эксперимент</button></div>
+            </form>
+            <div id="experiment-summary" class="list"></div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="result" aria-live="polite">
+        <div class="result-head"><h2>Ответ API</h2><span id="result-status">Ожидание</span></div>
+        <div id="request-line">Выберите действие слева</div>
+        <pre id="response-body">Здесь появится JSON-ответ сервера.</pre>
+      </aside>
+    </div>
+  </div>
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const state = { events: [] };
+
+    function showResult(method, path, status, data, success) {
+      $('#request-line').textContent = `${method} ${path}`;
+      const badge = $('#result-status');
+      badge.textContent = status;
+      badge.className = success ? 'good' : 'bad';
+      $('#response-body').textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function request(method, path, body, trigger) {
+      if (trigger) trigger.disabled = true;
+      $('#result-status').textContent = 'Загрузка…';
+      $('#result-status').className = '';
+      try {
+        const response = await fetch(path, {
+          method,
+          headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
+          body: body === undefined ? undefined : JSON.stringify(body)
+        });
+        const raw = await response.text();
+        let data;
+        try { data = raw ? JSON.parse(raw) : null; } catch { data = raw; }
+        showResult(method, path, `${response.status} ${response.statusText}`, data, response.ok);
+        if (!response.ok) return null;
+        return data;
+      } catch (error) {
+        showResult(method, path, 'Ошибка сети', error.message, false);
+        return null;
+      } finally {
+        if (trigger) trigger.disabled = false;
+      }
+    }
+
+    function requiredId(selector) {
+      const input = $(selector);
+      if (!input.reportValidity()) return null;
+      return encodeURIComponent(input.value.trim());
+    }
+
+    function useEvent(id) {
+      $('#event-id').value = id;
+      $('#draft-event-id').value = id;
+    }
+
+    function renderEvents(events) {
+      const list = $('#event-list');
+      list.replaceChildren();
+      if (!events.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'Событий пока нет. Создайте первое выше.';
+        list.append(empty);
+        return;
+      }
+      for (const event of events) {
+        const item = document.createElement('div');
+        item.className = 'item';
+        const heading = document.createElement('div');
+        heading.className = 'item-head';
+        const title = document.createElement('strong');
+        title.textContent = event.title;
+        const kind = document.createElement('small');
+        kind.textContent = event.type;
+        const id = document.createElement('code');
+        id.textContent = event.id;
+        const detail = document.createElement('small');
+        detail.textContent = `${new Date(event.startsAt).toLocaleString('ru-RU')} · мест: ${event.capacity}`;
+        const pick = document.createElement('button');
+        pick.className = 'secondary';
+        pick.type = 'button';
+        pick.textContent = 'Выбрать';
+        pick.addEventListener('click', () => useEvent(event.id));
+        heading.append(title, kind);
+        item.append(heading, id, detail, document.createElement('br'), pick);
+        list.append(item);
+      }
+    }
+
+    async function refreshEvents(trigger) {
+      const events = await request('GET', '/api/events', undefined, trigger);
+      if (Array.isArray(events)) {
+        state.events = events;
+        renderEvents(events);
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(button => button.setAttribute('aria-selected', String(button === tab)));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === tab.dataset.tab));
+    }));
+
+    $('#create-event').addEventListener('submit', async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const values = Object.fromEntries(new FormData(form));
+      const created = await request('POST', '/api/events', {
+        title: values.title.trim(), type: values.type.trim(),
+        startsAt: new Date(values.startsAt).toISOString(), capacity: Number(values.capacity)
+      }, event.submitter);
+      if (created?.id) { useEvent(created.id); state.events.unshift(created); renderEvents(state.events); }
+    });
+
+    $('#create-draft').addEventListener('submit', async event => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(event.currentTarget));
+      const created = await request('POST', '/api/drafts', {
+        eventId: values.eventId.trim(), managerId: values.managerId.trim(),
+        quantity: Number(values.quantity), comment: values.comment.trim(), ttlSeconds: Number(values.ttlSeconds)
+      }, event.submitter);
+      if (created?.id) $('#draft-id').value = created.id;
+    });
+
+    $('#save-settings').addEventListener('submit', async event => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(event.currentTarget));
+      const path = `/api/managers/${encodeURIComponent(values.managerId.trim())}/settings`;
+      await request('PUT', path, {
+        managerId: values.managerId.trim(), language: values.language.trim(),
+        theme: values.theme, pageSize: Number(values.pageSize)
+      }, event.submitter);
+    });
+
+    $('#run-experiment').addEventListener('submit', async event => {
+      event.preventDefault();
+      const writers = Number(new FormData(event.currentTarget).get('writers'));
+      const result = await request('POST', `/api/experiments/write-conflict?writers=${writers}`, undefined, event.submitter);
+      const summary = $('#experiment-summary');
+      summary.replaceChildren();
+      if (result) {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.textContent = `Blind write: ${result.blindWriteFinalValue} · CAS: ${result.casFinalValue} · конфликты CAS: ${result.casConflicts}`;
+        summary.append(item);
+      }
+    });
+
+    $('#refresh-events').addEventListener('click', event => refreshEvents(event.currentTarget));
+    document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', async () => {
+      const action = button.dataset.action;
+      const idSelector = action.includes('settings') ? '#settings-manager-id' : action.includes('order') ? '#order-id' : action.includes('draft') ? '#draft-id' : '#event-id';
+      const id = requiredId(idSelector);
+      if (!id) return;
+      if (action === 'get-event') await request('GET', `/api/events/${id}`, undefined, button);
+      if (action === 'get-views') await request('GET', `/api/events/${id}/views`, undefined, button);
+      if (action === 'add-view') await request('POST', `/api/events/${id}/views`, undefined, button);
+      if (action === 'get-draft') await request('GET', `/api/drafts/${id}`, undefined, button);
+      if (action === 'submit-draft') {
+        const order = await request('POST', `/api/drafts/${id}/submit`, undefined, button);
+        if (order?.id) $('#order-id').value = order.id;
+      }
+      if (action === 'get-order') await request('GET', `/api/orders/${id}`, undefined, button);
+      if (action === 'get-settings') await request('GET', `/api/managers/${id}/settings`, undefined, button);
+    }));
+
+    refreshEvents().then(() => {
+      const connection = $('#connection');
+      const online = $('#result-status').classList.contains('good');
+      connection.textContent = online ? 'API доступен' : 'API недоступен';
+      connection.classList.add(online ? 'ok' : 'error');
+    });
+  </script>
+</body>
+</html>
