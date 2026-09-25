@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.bright.exception.ResourceConflictException;
 import ru.bright.exception.ResourceNotFoundException;
 import ru.bright.model.DraftOrder;
+import ru.bright.model.ManagerSettings;
 import ru.bright.model.Order;
 import ru.bright.repository.EtcdGateway;
 import ru.bright.repository.EtcdKeys;
@@ -19,14 +20,16 @@ public class OrderService {
     private final EtcdGateway gateway;
     private final JsonConverter json;
     private final Clock clock;
+    private final SettingsService settingsService;
 
-    public OrderService(EtcdGateway gateway, JsonConverter json, Clock clock) {
+    public OrderService(EtcdGateway gateway, JsonConverter json, Clock clock, SettingsService settingsService) {
         this.gateway = gateway;
         this.json = json;
         this.clock = clock;
+        this.settingsService = settingsService;
     }
 
-    public DraftOrder createDraft(UUID eventId, String managerId, int quantity, String comment, long ttlSeconds) {
+    public DraftOrder createDraft(UUID eventId, String managerId, Integer quantity, String comment, long ttlSeconds) {
         if (gateway.get(EtcdKeys.event(eventId)).isEmpty()) {
             throw new ResourceNotFoundException("Event not found: " + eventId);
         }
@@ -34,8 +37,11 @@ public class OrderService {
             throw new IllegalArgumentException("TTL must be 5..86400 seconds");
         }
 
+        int resolvedQuantity = quantity != null ? quantity : settingsService.getSettings(managerId)
+                .map(ManagerSettings::defaultQuantity)
+                .orElse(2);
         DraftOrder draft = new DraftOrder(
-                UUID.randomUUID(), eventId, managerId, quantity, comment, clock.instant());
+                UUID.randomUUID(), eventId, managerId, resolvedQuantity, comment, clock.instant());
         gateway.putWithTtl(EtcdKeys.draft(draft.id()), json.write(draft), ttlSeconds);
         return draft;
     }

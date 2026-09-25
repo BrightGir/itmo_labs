@@ -6,7 +6,7 @@ Spring Boot-приложение для работы с событиями би�
 
 - хранение событий и заказов в формате JSON;
 - временные заявки через Etcd lease и TTL;
-- cache-aside для настроек менеджера;
+- cache-aside для количества мест по умолчанию в заявке менеджера;
 - атомарный счётчик просмотров через CAS;
 - транзакционное создание заказа и удаление заявки;
 - сравнение blind write и CAS при конкурентной записи;
@@ -92,6 +92,14 @@ curl -sS -X POST http://localhost:18080/api/events \
 curl -sS -X POST http://localhost:18080/api/drafts \
   -H 'Content-Type: application/json' \
   -d '{"eventId":"EVENT_ID","managerId":"manager-1","quantity":2,"comment":"Первый ряд","ttlSeconds":30}'
+```
+
+Поле `quantity` можно не передавать: тогда берётся настройка менеджера или `2`, если её нет. Настроить значение:
+
+```bash
+curl -sS -X PUT http://localhost:18080/api/managers/manager-1/settings \
+  -H 'Content-Type: application/json' \
+  -d '{"defaultQuantity":4}'
 ```
 
 Оформить заявку:

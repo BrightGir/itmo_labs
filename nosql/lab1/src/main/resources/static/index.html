@@ -104,7 +104,7 @@
             <form id="create-draft" class="grid">
               <label class="field full">ID события<input name="eventId" id="draft-event-id" required placeholder="Создайте или выберите событие"></label>
               <label class="field">ID менеджера<input name="managerId" required value="manager-1"></label>
-              <label class="field">Количество<input name="quantity" type="number" min="1" value="2" required></label>
+              <label class="field">Количество мест (пусто — из настроек)<input name="quantity" type="number" min="1" placeholder="По умолчанию: 2"></label>
               <label class="field">TTL, секунд<input name="ttlSeconds" type="number" min="5" max="86400" value="30" required></label>
               <label class="field full">Комментарий<textarea name="comment" placeholder="Например, первый ряд"></textarea></label>
               <div class="actions"><button class="primary" type="submit">Создать заявку</button></div>
@@ -121,11 +121,10 @@
         </section>
 
         <section id="settings" class="panel">
-          <div class="card"><h2>Настройки менеджера</h2><p>GET/PUT /api/managers/{managerId}/settings · повторный GET показывает работу кэша</p>
+          <div class="card"><h2>Настройки менеджера</h2><p>GET/PUT /api/managers/{managerId}/settings · количество подставится в заявку, если оставить поле пустым</p>
             <form id="save-settings" class="grid">
               <label class="field full">ID менеджера<input name="managerId" id="settings-manager-id" required value="manager-1"></label>
-              <label class="field">Язык<input name="language" required value="ru"></label>
-              <label class="field">Тема<select name="theme"><option value="light">light</option><option value="dark">dark</option></select></label>
+              <label class="field">Количество мест по умолчанию<input name="defaultQuantity" type="number" min="1" required value="2"></label>
               <div class="actions full"><button class="primary" type="submit">Сохранить</button><button class="secondary" type="button" data-action="get-settings">Получить настройки</button></div>
             </form>
           </div>
@@ -268,7 +267,8 @@
       const values = Object.fromEntries(new FormData(event.currentTarget));
       const created = await request('POST', '/api/drafts', {
         eventId: values.eventId.trim(), managerId: values.managerId.trim(),
-        quantity: Number(values.quantity), comment: values.comment.trim(), ttlSeconds: Number(values.ttlSeconds)
+        quantity: values.quantity ? Number(values.quantity) : null,
+        comment: values.comment.trim(), ttlSeconds: Number(values.ttlSeconds)
       }, event.submitter);
       if (created?.id) $('#draft-id').value = created.id;
     });
@@ -278,8 +278,7 @@
       const values = Object.fromEntries(new FormData(event.currentTarget));
       const path = `/api/managers/${encodeURIComponent(values.managerId.trim())}/settings`;
       await request('PUT', path, {
-        managerId: values.managerId.trim(), language: values.language.trim(),
-        theme: values.theme
+        managerId: values.managerId.trim(), defaultQuantity: Number(values.defaultQuantity)
       }, event.submitter);
     });
 

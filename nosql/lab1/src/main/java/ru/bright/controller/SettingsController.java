@@ -23,7 +23,7 @@ public class SettingsController {
     @PutMapping("/{managerId}/settings")
     public ManagerSettings saveSettings(@PathVariable String managerId,
                                         @Valid @RequestBody ManagerSettings settings) {
-        ManagerSettings normalized = new ManagerSettings(managerId, settings.language(), settings.theme());
+        ManagerSettings normalized = new ManagerSettings(managerId, settings.defaultQuantity());
         service.saveSettings(normalized);
         return normalized;
     }

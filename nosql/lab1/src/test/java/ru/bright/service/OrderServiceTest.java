@@ -30,7 +30,8 @@ class OrderServiceTest {
         gateway = new InMemoryEtcdGateway(clock);
         JsonConverter json = TestObjects.jsonConverter();
         eventService = new EventService(gateway, json, clock);
-        orderService = new OrderService(gateway, json, clock);
+        orderService = new OrderService(gateway, json, clock,
+                new SettingsService(gateway, json, clock, 60));
     }
 
     @Test
